@@ -1,19 +1,15 @@
-package OPDoublyLinkedList;
 
 import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class DLinkedList<T> {
 	private int size;
 	private Node<T> head;
 	private Node<T> tail;
-
+	
 	
 	public DLinkedList() {
 		size = 0;
@@ -50,7 +46,7 @@ public class DLinkedList<T> {
 
 	
 	// inserts a value right above a specific index
-	public void insertAbove(int index, T item) throws ArrayIndexOutOfBoundsException {
+	public void insert(int index, T item) throws ArrayIndexOutOfBoundsException {
 		if (index == size - 1) {
 			add(item);
 			return;
@@ -72,7 +68,7 @@ public class DLinkedList<T> {
 			head = ptr.next;
 		}
 
-		if (index < size - 1) // if the node removed is not the last one
+		if (index < size - 1) // if the node removed is not the last one. Sets tail if it is
 			ptr.next.pre = ptr.pre;
 		else {
 			tail = ptr.pre;
@@ -82,13 +78,13 @@ public class DLinkedList<T> {
 	
 	
 	//Removes first occurrence of specific item from the list 
-	public void remove(T value) {
+	public void remove(T value) throws ArrayIndexOutOfBoundsException {
 		remove(indexOf(value));
 	}
 	
 	
 	//Removes a range of items from the start index to end index(Both inclusive)
-	public void remove(int start, int end) {		
+	public void remove(int start, int end) throws ArrayIndexOutOfBoundsException {		
 		while(start <= end) {
 			remove(start);
 			end--;
@@ -105,14 +101,20 @@ public class DLinkedList<T> {
 
 	
 	// Returns the item at the specified index without removing it
-	public T see(int index) throws ArrayIndexOutOfBoundsException {
+	public T get(int index) throws ArrayIndexOutOfBoundsException {
 		return traverseForward(index).value;
 	}
-
+	
+	
+	//Returns item at the end of the list
+	public T getLast() {
+		return traverseForward(size - 1).value;
+	}
+	
 	
 	// Returns the item at the specified index and removes it
 	public T take(int index) throws ArrayIndexOutOfBoundsException {
-		T item = see(index);
+		T item = get(index);
 		remove(index);
 		return item;
 	}
@@ -233,15 +235,19 @@ public class DLinkedList<T> {
 	}
 
 	
+	
 	// Points the pointer at specified node from the head
 	private Node<T> traverseForward(int index) throws ArrayIndexOutOfBoundsException {
+		if(isEmpty()) {
+			throw new ArrayIndexOutOfBoundsException();
+		}
 		int counter = 0;
 		Node<T> ptr = head;
 		while (counter != index) {
 			counter++;
 			ptr = ptr.next;
 			if (ptr == null) {
-				throw new ArrayIndexOutOfBoundsException("Invalid index entered");
+				throw new ArrayIndexOutOfBoundsException();
 			}
 		}
 		return ptr;

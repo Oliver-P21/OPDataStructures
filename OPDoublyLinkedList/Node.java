@@ -1,4 +1,3 @@
-package OPDoublyLinkedList;
 
 public class Node<T>{
 	public T value;
