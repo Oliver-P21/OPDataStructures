@@ -1,15 +1,14 @@
-import java.lang.reflect.Array;
 import java.util.List;
 
 public class MyArrayList<T> {
 	private int size;
 	private Object[] elements;
-	private final int defaultCapacity = 10;
+	private final int DEFUALT_CAPACITY = 10;
 
 	// Initializes the list with default capacity
 	public MyArrayList() {
 		size = 0;
-		elements = new Object[defaultCapacity];
+		elements = new Object[DEFUALT_CAPACITY];
 	}
 
 	// Initializes the list with given capacity
@@ -37,6 +36,7 @@ public class MyArrayList<T> {
 	// Replaces the item at the specific index with the given item
 	// UNTESTED
 	public void replace(T item, int index) throws ArrayIndexOutOfBoundsException {
+		throwCheck(index);
 		elements[index] = item;
 	}
 
@@ -56,6 +56,7 @@ public class MyArrayList<T> {
 	// TESTED
 	@SuppressWarnings("unchecked")
 	public T get(int index) throws ArrayIndexOutOfBoundsException {
+		throwCheck(index);
 		return (T) elements[index];
 	}
 
@@ -66,73 +67,124 @@ public class MyArrayList<T> {
 		return (T) elements[size - 1];
 	}
 
+	public void remove(int index) {
+		
+	}
+
 	public void remove(T item) {
 
 	}
 
-	public void remove(int index) {
+	public void remove(int start, int end) {
 
 	}
 
 	public void removeAll(T item) {
 
 	}
-
+	
+	public T take(int index) {
+		
+	}
+	// Clears the list of all elements
+	// UNTESTED
 	public void clear() {
-
+		elements = new Object[DEFUALT_CAPACITY];
 	}
 
-	public int indexOf(Object o) {
-		return 0;
+	// Returns the first index where the item is found, or -1 if it is not present
+	// UNTESTED
+	public int indexOf(T item) {
+		for (int i = 0; i < size; i++) {
+			if (item.equals(elements[1])) {
+				return i;
+			}
+		}
+
+		return -1;
 	}
 
-	public int lastIndexOf(Object o) {
-		return 0;
+	// Returns the last index where the item is found, or -1 if it is not present
+	// UNTESTED
+	public int lastIndexOf(T item) {
+		for (int i = size - 1; i <= 0; i--) {
+			if (item.equals(elements[1])) {
+				return i;
+			}
+		}
+
+		return -1;
 	}
 
-	public List<T> subList(int fromIndex, int toIndex) {
+	// Returns a sub list from the start index to the end, both ends inclusive
+	// UNTESTED
+	public MyArrayList<T> subList(int start, int end) {
+		throwCheck(start);
+		throwCheck(end);
+		MyArrayList<T> subList = new MyArrayList<>();
 
-		return null;
+		for (int i = start; i < end; i++) {
+			subList.add(get(i));
+		}
+
+		return subList;
 	}
 
 	// Returns the number of times a specified item appears in the list
 	// UNTESTED
 	public int numberOf(T searchValue) {
 		int total = 0;
-
+		for (int i = 0; i < size; i++) {
+			if (searchValue.equals(elements[i]))
+				total++;
+		}
 		return total;
 	}
 
-	public Object[] toArray() {
-
-		return null;
+	// Converts the list into a standard array
+	// UNTESTED
+	@SuppressWarnings("unchecked")
+	public T[] toArray() {
+		T[] array = (T[]) new Object[size];
+		for (int i = 0; i < size; i++) {
+			array[i] = (T) elements[i];
+		}
+		return array;
 	}
 
-	public T[] toArray(T[] a) {
-		return null;
-	}
-	
 	// Returns current number of elements in the list
 	// TESTED
 	public int size() {
 		return size;
 	}
 
-	//Returns current total capacity of class array
-	// UNTESTED
+	// Returns current total capacity of class array
+	// TESTED
 	public int maxSize() {
 		return elements.length;
 	}
-	
-	//Returns true if there are elements in the set
+
+	// Returns true if there are elements in the list
+	// Tested
 	public boolean isEmpty() {
 		return size == 0;
 	}
 
+	// Checks to see if the list contains the item
+	// Tested
 	public boolean contains(T item) {
-		return true;
+		for (int i = 0; i < size; i++) {
+			if (item.equals(elements[i])) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
+	// Returns string representation of list
+	// UNTETSED
+	@Override
 	public String toString() {
 		String listString = "[";
 
@@ -145,27 +197,28 @@ public class MyArrayList<T> {
 
 		return listString.concat("]");
 	}
-	
+
+	// Checks to see if the given list is equal to this list
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean equals(Object object) {
-		
-		if(object == null) {
+
+		if (object == null) {
 			return false;
 		}
-		
-		if(this.getClass() != object.getClass()) {
+
+		if (this.getClass() != object.getClass()) {
 			return false;
 		}
-			
+
 		if (object == this) {
 			return true;
 		}
-		
+
 		MyArrayList<T> list = (MyArrayList<T>) object;
-		
+
 		for (int i = 0; i < size(); i++) {
-			if(list.get(i) != get(i)) {
+			if (list.get(i) != get(i)) {
 				return false;
 			}
 		}
@@ -173,6 +226,7 @@ public class MyArrayList<T> {
 		return true;
 	}
 
+	// Grows the array as necessary
 	private void checkAndResize() {
 		if (size == elements.length) {
 			Object[] newElements = new Object[size + 10];
@@ -182,10 +236,11 @@ public class MyArrayList<T> {
 			elements = newElements;
 		}
 	}
-	
-	private void throwCheck (int index) throws ArrayIndexOutOfBoundsException {
-		if(index < 0 || index > elements.length) {
-			throw new ArrayIndexOutOfBoundsException();
+
+	// throws an exception if the index is out of bounds
+	private void throwCheck(int index) throws ArrayIndexOutOfBoundsException {
+		if (index < 0 || index >= size) {
+			throw new ArrayIndexOutOfBoundsException(index);
 		}
 	}
 }
